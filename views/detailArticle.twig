@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block body %}
+      <div class="container">
+   
+  <img src="{{article.image}}" width="1000" height="300" class="card-img-top" alt="{{article.title}}">
+  <div class="card-body">
+       <h3>{{article.name}}</h3>
+    <p class="card-text"> publié le: {{article.createdAt | date('d/m/y')}}</p>
+    <p class="card-text">{{article.content}}</p>
+    
+  <hr>
+  <a href='/' class= "btn btn-primary">retour Accueil</a>
+       
+     </div>
+</div>
+{% endblock %}}
