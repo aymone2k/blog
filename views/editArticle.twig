@@ -1,0 +1,72 @@
+{% extends "layout.twig" %}
+
+{% block body %}
+
+<h2>Mise à jour d'article </h2>
+{% if errorForm %}
+  <p class="text-danger">il ya une erreur. </p>
+  <ul class='errors'>
+    {% for error in errorForm %}
+      {% if error.name %}
+        <li>{{error.name.message}}</li>
+      {% endif %}
+      {% if error.category %}
+        <li>{{error.category.message}}</li>
+      {% endif %}
+      {% if error.content %}
+        <li>{{error.content.message}}</li>
+      {% endif %}
+      {% if error.image %}
+        <li>{{error.image.message}}</li>
+      {% endif %}
+    {% endfor %}
+  </ul> 
+{% endif %}
+<form action=" " method="POST" enctype="multipart/form-data">
+ <div class="form-group">
+    <label for="exampleInputName" class="form-label">Nom de l'article</label>
+    <input type="text" class="form-control" id="exampleInputName" name="name" value="{{article.name}}">
+   
+  </div>
+  <div class="form-group">
+    <label for="">catégories</label>
+    <select class="form-control" name="category" id="">
+    <option>choisir cat</option>
+        {% if categories %}
+            {% for category in categories %}
+            {% if category.title is same as(article.category) %}
+                 <option value="{{category.title}}" selected>{{category.title}}</option>
+                {% else %}
+                 <option value="{{category.title}}">{{category.title}}</option>
+            {% endif %}
+               
+            {% endfor %}
+        {% endif %}
+    </select>
+  </div>
+ <div class="form-group">
+    <label for="exampleInputContent" class="form-label">Description de l'article</label>
+  
+      <textarea class="form-control" name="content" id="editor" rows="3">{{article.content | raw}}</textarea>
+
+  </div>
+ <div class="form-group">
+    <label for="exampleInputContent" class="form-label">Image de l'article</label>
+    <input type="file" class="form-control" id="exampleInputContent" name="image">
+    
+  </div>
+  <button type="submit" class="btn btn-primary">Modifier</button>
+</form>
+<div>
+{%if success %} <div class="alert alert-success">{{success}}</div> {% endif %}
+{%if error %} <div class="alert alert-danger">{{error}}</div> {% endif %}
+</div>
+<script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+<script>
+        ClassicEditor
+            .create( document.querySelector( '#editor' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script>
+{% endblock %}

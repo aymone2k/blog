@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block body %}
+    
+    <h1> Register </h1>
+     {% if errorForm %}
+  <p class="text-danger">il ya une erreur. </p>
+  <ul class='errors'>
+    {% for error in errorForm %}
+      {% if error.name %}
+        <li>{{error.name.message}}</li>
+      {% endif %}
+      {% if error.username %}
+        <li>{{error.username.message}}</li>
+      {% endif %}
+      {% if error.email %}
+        <li>{{error.email.message}}</li>
+      {% endif %}
+      {% if error.password %}
+        <li>{{error.password.message}}</li>
+      {% endif %}
+       {% if error.passwordConfirm %}
+        <li>{{error.passwordConfirm.message}}</li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+    {% endif %}
+<form class="row g-3" action='' method='POST'>
+<div class=" form-group">
+    <label for="staticEmail2" class="">name</label>
+    <input type="text" class="form-control" id="name" value="" name="name">
+  </div>
+  <div class=" form-group">
+    <label for="staticEmail2" class="">username</label>
+    <input type="text" class="form-control" id="username" value="" name="username">
+  </div>
+  <div class=" form-group">
+    <label for="staticEmail2" class="">Email</label>
+    <input type="text"  class="form-control" id="username" value="" name="email">
+  </div>
+  <div class=" form-group">
+    <label for="inputPassword2" class="">Password</label>
+    <input type="password" value="" name="password" class="form-control" id="password" placeholder="Password">
+  </div>
+<div class=" form-group">
+    <label for="inputPassword2" class="">Password confirm</label>
+    <input type="password" value="" class="form-control" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password">
+  </div>
+    <button type="submit" class="btn btn-primary mb-3">SingUp</button>
+ 
+</form>
+
+
+{% endblock %}

@@ -3,8 +3,11 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var flash = require('connect-flash');
+const flash = require('connect-flash');
 var logger = require('morgan');
+const passport = require('passport');
+const User = require('./models/user.model');
+
 const mongoose = require('mongoose');
 const Article = require('./models/article.model');
 const Category = require('./models/category.model');
@@ -15,6 +18,9 @@ var indexRouter = require('./routes');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(express.json());//prise en chage du json
+app.use(express.urlencoded({extended: false}));// prise en charge des formulaires html
+
 
 //initialisation de la session
 
@@ -22,19 +28,37 @@ app.use(session({
   secret: 'je saisie ma cle dencodage',//clé d'encodage pour le serveur
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true }//pr gérer les préférences utilisateurs si on le souhaite
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+    // secure: true, // becareful set this option, check here: https://www.npmjs.com/package/express-session#cookiesecure. In local, if you set this to true, you won't receive flash as you are using `http` in local, but http is not secure
+  },
 }));
 
 // init flash
 app.use(flash());
+
+//init passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+//passport-local-mongoose
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+//middleware pour mettre des infos en local ce st des fonctionnalitées de flash
 app.use((req, res, next)=>{
+  if(req.user){
+    res.locals.user = req.user; //partt ou on se trouvera ds notre site on aura les infos du user idetifié
+  }
+  res.locals.warning = req.flash('warning');
   res.locals.error = req.flash('error');
   res.locals.success = req.flash('success');
+  res.locals.errorForm = req.flash('errorForm');
+  
   next();
 })
-
-app.use(express.json());//prise en chage du json
-app.use(express.urlencoded({extended: false}));// prise en charge des formulaires html
 
 
 mongoose.connect('mongodb://localhost:27017/blog', {useNewUrlParser: true, useUnifiedTopology: true})
@@ -101,7 +125,7 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  
   // render the error page
   res.status(err.status || 500);
   res.render('error');

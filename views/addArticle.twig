@@ -3,10 +3,25 @@
 {% block body %}
 
 <h2>Ajout d'article </h2>
-<div>
-{%if success %} <div class="alert alert-success">{{success}}</div> {% endif %}
-{%if error %} <div class="alert alert-danger">{{error}}</div> {% endif %}
-</div>
+{% if errorForm %}
+  <p class="text-danger">il ya une erreur. </p>
+  <ul class='errors'>
+    {% for error in errorForm %}
+      {% if error.name %}
+        <li>{{error.name.message}}</li>
+      {% endif %}
+      {% if error.category %}
+        <li>{{error.category.message}}</li>
+      {% endif %}
+      {% if error.content %}
+        <li>{{error.content.message}}</li>
+      {% endif %}
+      {% if error.image %}
+        <li>{{error.image.message}}</li>
+      {% endif %}
+    {% endfor %}
+  </ul> 
+{% endif %}
 <form action="/addArticle" method="POST" enctype="multipart/form-data">
  <div class="form-group">
     <label for="exampleInputName" class="form-label">Nom de l'article</label>
@@ -27,7 +42,7 @@
  <div class="form-group">
     <label for="exampleInputContent" class="form-label">Description de l'article</label>
   
-      <textarea class="form-control" name="content" id="" rows="3"></textarea>
+      <textarea class="form-control" name="content" id="editor" rows="3"></textarea>
 
   </div>
  <div class="form-group">
@@ -37,5 +52,16 @@
   </div>
   <button type="submit" class="btn btn-primary">Ajouter un article</button>
 </form>
-
+<div>
+{%if success %} <div class="alert alert-success">{{success}}</div> {% endif %}
+{%if error %} <div class="alert alert-danger">{{error}}</div> {% endif %}
+</div>
+<script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+<script>
+        ClassicEditor
+            .create( document.querySelector( '#editor' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script>
 {% endblock %}

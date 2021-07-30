@@ -1,9 +1,10 @@
 const Article = require('../models/article.model');
 const Category = require('../models/category.model');
+const fs = require('fs');
 
 // affichage
 
-exports.list = (req, res)=>{
+exports.listArticle = (req, res)=>{
      //res.render('index', { title: 'Express' });
   Article.find()
   .then((articles)=>{
@@ -15,7 +16,7 @@ exports.list = (req, res)=>{
   });
 }
 
-exports.detail = (req, res, next)=>{
+exports.detailArticle = (req, res, next)=>{
     idArticle = req.params.id;
     Article.findOne({_id: idArticle})
     .then((article)=>{
@@ -27,7 +28,7 @@ exports.detail = (req, res, next)=>{
   }
 
   // methode permettant de produire l'affichage de addarticle
-  exports.add = (req,res,next)=>{
+  exports.addArticle = (req,res,next)=>{
       Category.find()
       .then((categories)=>{
         res.render('addArticle',
@@ -38,7 +39,7 @@ exports.detail = (req, res, next)=>{
       });
   }
 //methode permettant d'ajouter un article
-  exports.addOne = (req, res, next)=>{
+  exports.addOneArticle = (req, res, next)=>{
     var article = new Article( {
         ...req.body, 
         image: `${req.protocol}://${req.get('host')}/images/articles/${req.file.filename}`,
@@ -69,3 +70,50 @@ exports.detail = (req, res, next)=>{
     .catch((err)=>
        ,
         res.redirect('/addArticle'));  */
+
+exports.editArticle =(req, res)=>{
+  const id = req.params.id;
+  Article.findOne({_id: id}, (err, article)=>{
+    if(err){
+      req.flash('error', err.message);
+      return res.redirect('/');
+    }
+    Category.find((err, categories)=>{
+      if(err){
+        req.flash('error', err.message);
+        return res.redirect('/');
+      }
+      return res.render('editArticle', {categories: categories, article: article})
+    })
+  })
+}
+
+exports.editOneArticle =(req, res)=>{
+  const id = req.params.id;
+  Article.findOne({_id: id}, (err, article)=>{
+    if(err){
+      req.flash('error', err.message)
+      return res.redirect('/editArticle/'+id);
+    }
+
+    if(req.file){//s'il ya un fichier penser à supprimer l'ancienne image
+      const filename = article.image.split('/articles/')[1];
+      fs.unlink(`public/images/articles/${filename}`, ()=>{
+        console.log('image supprimée:' +filename);
+      })
+    }
+  article.name = req.body.name ? req.body.name : article.name; //est ce ke nom est modifié? si oui on le MAJ si non on conserve l'ancien 
+  article.category = req.body.category ? req.body.category : article.category;
+  article.content = req.body.content ? req.body.content : article.content;
+  article.image = req.file ? `${req.protocol}://${req.get('host')}/images/articles/${req.file.filename}` : article.image;
+//fonctionne mais l'ancienne image est restée sur le serveur, il faut penser à la supprimer 
+  article.save((err, article)=>{
+    if(err){
+      req.flash('error', err.message)
+      return res.redirect('/editArticle/'+id);
+  }
+  req.flash('success', "modifs effectuées!");
+  return res.redirect('/editArticle/'+id);
+})
+})
+}
