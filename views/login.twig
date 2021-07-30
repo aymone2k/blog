@@ -4,7 +4,7 @@
     
     <h1> Login </h1>
     {% if errorForm %}
-  <p class="text-danger">il ya une erreur. </p>
+  <p class="text-danger">Pas de compte? <a href="/users/signup">clique ici pr créer un cpte</a> </p>
   <ul class='errors'>
     {% for error in errorForm %}
  
@@ -27,7 +27,7 @@
     <label for="inputPassword2" class="">Password</label>
     <input type="password" value="" class="form-control" id="password" placeholder="Password" name='password'>
   </div>
-
+ <p class="text-danger">Vous avez oublié votre mot de passe ? <a href="/users/forgotPassword">clique ici pr le reinitialiser</a> </p>
     <button type="submit" class="btn btn-primary mb-3">Login</button>
  
 </form>

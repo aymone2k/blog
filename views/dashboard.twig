@@ -2,5 +2,48 @@
 
 {% block body %}
     <h1>welcome to your dashboard {{user.username}} </h1>
+
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Home</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="pills-article-tab" data-bs-toggle="pill" data-bs-target="#pills-article" type="button" role="tab" aria-controls="pills-article" aria-selected="false">Articles</button>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+        <h3>hello, {{user.name}} </h3>
+        <p> oiuytgfdsqsdtyyjkyiutyzsydufgkl </p>
+        </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <form class="row g-3" action='' method='POST'>
+          <input type="hidden" class="form-control" id="userId" value="{{ user._id }}" name="userId">
+            <div class=" form-group">
+            <label for="staticEmail2" class="">name</label>
+            <input type="text" class="form-control" id="name" value="{{ user.name }}" name="name">
+        </div>
+        <div class=" form-group">
+            <label for="staticEmail2" class="">username</label>
+            <input type="text" class="form-control" id="username" value="{{ user.username }}" name="username">
+        </div>
+        <div class=" form-group">
+            <label for="staticEmail2" class="">Email</label>
+            <input type="text"  class="form-control" id="username" value="{{ user.email }}" name="email">
+        </div>
+        
+            <button type="submit" class="btn btn-primary mb-3">MAJ profile</button>
+        
+        </form>
+
+  </div>
+  <div class="tab-pane fade" id="pills-article" role="tabpanel" aria-labelledby="pills-article-tab">
+  
+  <h3> Mes Articles </h3>
+  </div>
+</div>
     
 {% endblock %}
