@@ -20,7 +20,7 @@
         <p> oiuytgfdsqsdtyyjkyiutyzsydufgkl </p>
         </div>
   <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-        <form class="row g-3" action='' method='POST'>
+        <form class="row g-3" action='/users/updateProfile' method='POST'>
           <input type="hidden" class="form-control" id="userId" value="{{ user._id }}" name="userId">
             <div class=" form-group">
             <label for="staticEmail2" class="">name</label>
@@ -43,7 +43,55 @@
   <div class="tab-pane fade" id="pills-article" role="tabpanel" aria-labelledby="pills-article-tab">
   
   <h3> Mes Articles </h3>
+
+  {% if articles %}
+  <a href="/addArticle" class="btn btn-primary">Ajouter un nouvel article</a>
+    <div class="row">
+  {% for article in articles %}
+    <div class="card col-md-3 m-2" style="width: 18rem;">
+  <img src="{{article.image}}" class="card-img-top" alt="{{article.name}}">
+  <div class="card-body">
+    <h5 class="card-title">{{article.name}}</h5>
+    <p class="card-text">publié le: {{article.createdAt | date('d-m-Y h:m:s')}}</p>
+    <hr>
+    <div class="btn-group">
+    <a href="/article/{{article._id}}" class="btn btn-primary">en savoir plus</a>
+    
+    <a href="/editArticle/{{article._id}}" class="btn btn-warning">Mettre à jour</a>
+     
+         <!-- Button trigger modal -->
+<button type="button" data-bs-toggle="modal" data-bs-target="#deleteArticleModal" class="btn btn-danger">Delete
+</button>
+ <!-- Modal -->
+<div class="modal fade" id="deleteArticleModal" tabindex="-1" aria-labelledby="deleteArticleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirmation de suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        souhaitez vous confirmer la suppression?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <a href="/deleteArticle/{{article._id}}"  class="btn btn-primary">Confirmer la suppression</button></a>
+      </div>
+    </div>
   </div>
 </div>
-    
+
+  </div>
+  </div>
+</div>
+{% endfor %}
+  {% else %}
+    <p>pas d'articles pour l'instant</p>
+      <a href="/addArticle" class="btn btn-primary">Ajouter un article</a>
+  {% endif %}
+  </div>
+</div>
+
+
+
 {% endblock %}

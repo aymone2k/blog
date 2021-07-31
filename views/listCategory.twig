@@ -1,0 +1,21 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <h1>liste de catégories</h1>
+
+{% if categories %}
+  <div class="row">
+  {% for category in categories %}
+    <div class="card col-md-3 m-2" style="width: 18rem;">
+  
+    <h5 class="card-title">{{category.title}}</h5>
+       <hr>
+    <p class="card-title">{{category.description}}</p>
+    <a href="/editCategory/{{category._id}}" class="btn btn-primary">modifier</a>
+  
+  </div>
+</div>
+  {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

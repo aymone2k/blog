@@ -1,6 +1,7 @@
 const Article = require('../models/article.model');
 const Category = require('../models/category.model');
 const fs = require('fs');
+const User = require('../models/user.model');
 
 // affichage
 
@@ -43,6 +44,7 @@ exports.detailArticle = (req, res, next)=>{
     var article = new Article( {
         ...req.body, 
         image: `${req.protocol}://${req.get('host')}/images/articles/${req.file.filename}`,
+        author: req.user,
         createdAt:Date.now()});
         //console.log(article);
       article.save((err, article)=>{
@@ -50,26 +52,21 @@ exports.detailArticle = (req, res, next)=>{
              req.flash('error', 'erreur survenue')
              return res.redirect('/addArticle');
          } 
+         //pr ajouter des le array articles de user
+       /*   User.findOne({username: req.user.username}, (err, user)=>{
+           if(err){
+             console.log(err.message);
+           }
+           user.articles.push(article);
+           user.save();
+         }) */
          req.flash('success', 'votre message a été envoyé')
          return res.redirect('/');
      });
-/*  article.save(err, article).then(()=> 
-       // res.render('addArticle', {success: "votre article a été ajouté"}))
-       req.flash('success', 'votre message a été envoyé'),
-        console.log(req.flash('success', 'mon succes')),
-       res.redirect('/'))
 
-    .catch(()=>
-       // res.render('addArticle', {error:"sorry "})); 
-         req.flash('error', 'erreur survenue') ,
-         console.log(req.flash('error', 'erreur survenue')),
-         res.redirect('/addArticle')) */
   }
    
-     /*    )
-    .catch((err)=>
-       ,
-        res.redirect('/addArticle'));  */
+    
 
 exports.editArticle =(req, res)=>{
   const id = req.params.id;
@@ -90,12 +87,15 @@ exports.editArticle =(req, res)=>{
 
 exports.editOneArticle =(req, res)=>{
   const id = req.params.id;
-  Article.findOne({_id: id}, (err, article)=>{
+  Article.findOne({_id: id, author: req.user._id}, (err, article)=>{
     if(err){
       req.flash('error', err.message)
       return res.redirect('/editArticle/'+id);
     }
-
+    if(!article){
+      req.flash('error', 'vous ne disposez pas des droit pour modifier cet article')
+      return res.redirect('/');
+    }
     if(req.file){//s'il ya un fichier penser à supprimer l'ancienne image
       const filename = article.image.split('/articles/')[1];
       fs.unlink(`public/images/articles/${filename}`, ()=>{
@@ -112,8 +112,24 @@ exports.editOneArticle =(req, res)=>{
       req.flash('error', err.message)
       return res.redirect('/editArticle/'+id);
   }
-  req.flash('success', "modifs effectuées!");
-  return res.redirect('/editArticle/'+id);
+    req.flash('success', "modifs effectuées!");
+    return res.redirect('/editArticle/'+id);
 })
 })
+}
+
+exports.deleteArticle = (req, res)=>{
+
+  Article.deleteOne({_id: req.params.id, author: req.user._id}, (err, message)=>{
+    if(err){
+      req.flash('error', 'désolé nous ne pouvons supprimer cet élément')
+      return res.redirect('/users/dashboard')
+    }
+    if(!message.deletedCount){//si pas d'articles supprimé
+      req.flash('error', 'votre article ne peut pas etre effacé , vous avez pas les droits')
+      return res.redirect('/users/dashboard')
+    }
+    req.flash('success', 'votre article a été effacé')
+    return res.redirect('/users/dashboard')
+  })
 }

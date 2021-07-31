@@ -1,4 +1,5 @@
 var express = require('express');
+const { listArticle } = require('../controllers/article.controller');
 const userController = require('../controllers/user.controller');
 const { guard } = require('../middleware/guard');
 const sendRestMail = require('../middleware/services/email.service');
@@ -34,6 +35,8 @@ module.exports = router;
 router.get('/dashboard', guard, (req, res)=>{
   res.render('dashboard');
 })
+
+router.post('/updateProfile', userController.updateProfile)
 
 /**
  * Logout

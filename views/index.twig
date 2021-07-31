@@ -14,9 +14,7 @@
     <p class="card-text">publié le: {{article.createdAt | date('d-m-Y h:m:s')}}</p>
     <hr>
     <a href="/article/{{article._id}}" class="btn btn-primary">en savoir plus</a>
-    
-    <a href="/editArticle/{{article._id}}" class="btn btn-primary">Mettre à jour</a>
-
+  
   </div>
 </div>
   {% endfor %}

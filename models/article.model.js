@@ -6,6 +6,9 @@ const articleSchema = mongoose.Schema({
     category: {type: String, required: true},
     image:{type: String, required: true},
     createdAt: {type: Date, required: true},
+    author:{type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
 
 });
 

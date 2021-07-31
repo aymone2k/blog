@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
     email: {type: String, required: true},
     password: String,
     createdAt: {type: Date, default: Date.now()},
-
+    //articles: Array,//pr le stockage des articles(factultatif)
 });
 
 userSchema.plugin(passportLocalMongoose);

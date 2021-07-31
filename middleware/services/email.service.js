@@ -4,8 +4,8 @@ const sendRestMail = (req, res, next)=>{
     var tranporter = nodemailer.createTranporter({
         service:'gmail',
         auth:{
-            user: '',
-            pass: '',
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
         }
     });
     var message = "<br>Message:"+req.body.message;

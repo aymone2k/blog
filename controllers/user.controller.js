@@ -168,6 +168,41 @@ module.exports = {
             req.flash('success', 'votre mdp a été mis à jour, vous pouvez vous connecter');
             return res.redirect('/users/login');
         })
+    },
+
+    updateProfile:(req, res, next)=>{
+        if(!req.user){
+            req.flash('warning', 'Veuillez vous connecter pour modifier le profile');
+            return res.redirect('/users/login');
+        }
+        if(req.user._id != req.body.userId){
+            req.flash('error', 'vous ne pouvez pas modifier les informations de ce compte');
+            return res.redirect('/users/dashboard');
+        }
+        User.findOne({_id: req.body.userId}, (err, user)=>{
+            if(err){
+                console.log(err);
+            }
+            const oldUsername = user.username;
+
+            user.name = req.body.name ? req.body.name : user.name;
+            user.username = req.body.username ? req.body.username : user.username;
+            user.email = req.body.email ? req.body.email : user.email;
+            
+            user.save((err, user)=>{
+                if(err){
+                    req.flash('error', 'une erreur a été détecté, veuillez essayer encore')
+                    return res.redirect('/users/dashboard');
+                }
+                if(oldUsername != user.username){
+                    req.flash('success', 'votre username a été modifié merci de vous reconnecter avec le nouveau username: '+req.body.username );
+                    return res.redirect('/users/login');
+                }
+                req.flash('success', 'mise à jour du profile réussie');
+                return res.redirect('/users/dashboard');
+
+            })
+        })
     }
 
     }

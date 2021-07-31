@@ -1,0 +1,40 @@
+{% extends "layout.twig" %}
+
+{% block body %}
+
+<h2>Ajout de Catégories </h2>
+{% if errorForm %}
+  <p class="text-danger">il ya une erreur. </p>
+  <ul class='errors'>
+    {% for error in errorForm %}
+      {% if error.type %}
+        <li>{{error.type.message}}</li>
+      {% endif %}
+      {% if error.description %}
+        <li>{{error.description.message}}</li>
+      {% endif %}
+    
+    {% endfor %}
+  </ul> 
+{% endif %}
+<form action=" " method="POST" >
+ <div class="form-group">
+    <label for="exampleInputName" class="form-label">Nom de la categorie</label>
+    <input type="text" class="form-control" id="title" name="title">
+     </div>
+ 
+ <div class="form-group">
+    <label for="exampleInputContent" class="form-label">Description de la categorie</label>
+  
+      <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+
+  </div>
+
+  <button type="submit" class="btn btn-primary">Ajouter un categorie</button>
+</form>
+<div>
+{%if success %} <div class="alert alert-success">{{success}}</div> {% endif %}
+{%if error %} <div class="alert alert-danger">{{error}}</div> {% endif %}
+</div>
+
+{% endblock %}

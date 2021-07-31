@@ -7,6 +7,7 @@ const flash = require('connect-flash');
 var logger = require('morgan');
 const passport = require('passport');
 const User = require('./models/user.model');
+const dotenv = require('dotenv').config();
 
 const mongoose = require('mongoose');
 const Article = require('./models/article.model');
@@ -25,7 +26,7 @@ app.use(express.urlencoded({extended: false}));// prise en charge des formulaire
 //initialisation de la session
 
 app.use(session({
-  secret: 'je saisie ma cle dencodage',//clé d'encodage pour le serveur
+  secret: process.env.SESSION_SECRET,//clé d'encodage pour le serveur
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -46,6 +47,22 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use((req, res, next)=>{
+  if(req.isAuthenticated()){
+    Article.find({author: req.user._id}, (err, articles)=>{
+        if(err){
+            console.log(err)
+        }else{
+          console.log(articles);
+            res.locals.articles = articles;
+         }
+         next();
+    })
+}else{
+next();
+}
+})
+
 
 //middleware pour mettre des infos en local ce st des fonctionnalitées de flash
 app.use((req, res, next)=>{
@@ -61,47 +78,11 @@ app.use((req, res, next)=>{
 })
 
 
-mongoose.connect('mongodb://localhost:27017/blog', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.DATABASE, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(()=>console.log ("connexion réussie à mongoDB"))
 .catch(()=>console.log ("échec de connexion à mongoDB"));
 
-//CRUD
-//creation
-/* var article = new Article(
-  {
-    name: "article",
-    content: "pour le fun",
-    createdAt: Date.now(),
-  }
-)
-article.save().then(()=> console.log('article sauvegardé!')).catch(()=>console.log("article non sauvegardé"));
- */
-//insertion de plrs articles
 
-/* for (let index = 0; index < 20; index++) {
-  var article = new Article(
-    {
-      name: `article ${index}`,
-      content: `description n° ${index} pour mon article`,
-     
-      createdAt: Date.now(),
-    }
-  )
-  article.save().then(()=> console.log('article sauvegardé!')).catch(()=>console.log("article non sauvegardé"));
-
-} */ 
-/* 
-for (let index = 0; index < 4; index++) {
-  var category = new Category(
-    {
-      title: `category ${index}`,
-      description: `description catégorie ${index} `,
-          }
-  )
-  category.save().then(()=> console.log('categorie sauvegardé!')).catch(()=>console.log("categorie non sauvegardé"));
-
-} 
- */
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
@@ -109,7 +90,7 @@ app.set('view engine', 'twig');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser('je saisie ma cle dencodage'));
+app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
